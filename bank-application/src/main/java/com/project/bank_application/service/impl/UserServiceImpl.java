@@ -2,12 +2,15 @@ package com.project.bank_application.service.impl;
 
 import com.project.bank_application.dtos.AccountInfo;
 import com.project.bank_application.dtos.BankResponse;
+import com.project.bank_application.dtos.EmailDetails;
 import com.project.bank_application.dtos.UserRequest;
 import com.project.bank_application.entity.User;
 import com.project.bank_application.repository.UserRepository;
+import com.project.bank_application.service.EmailService;
 import com.project.bank_application.service.UserService;
 import com.project.bank_application.utils.AccountUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -15,12 +18,15 @@ import java.math.BigDecimal;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private EmailService emailService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Override
+    @Transactional
     public BankResponse createAccount(UserRequest request) {
 
         var userExists = userRepository.existsByEmail(request.getEmail());
@@ -50,6 +56,15 @@ public class UserServiceImpl implements UserService {
         newUser.setStatus("ACTIVE");
 
         User savedUser = userRepository.save(newUser);
+
+        // Send email alert
+
+        EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient(savedUser.getEmail());
+        emailDetails.setMessageBody("Congrats! Your account has been successfully created");
+        emailDetails.setSubject("Account Creation");
+
+        emailService.sendEmail(emailDetails);
 
         return new BankResponse(
                 AccountUtils.ACCOUNT_CREATION_SUCCESS_CODE,
