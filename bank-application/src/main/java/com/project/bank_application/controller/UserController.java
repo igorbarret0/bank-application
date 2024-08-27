@@ -1,14 +1,13 @@
 package com.project.bank_application.controller;
 
 import com.project.bank_application.dtos.BankResponse;
+import com.project.bank_application.dtos.CreditDebitRequest;
+import com.project.bank_application.dtos.EnquiryRequest;
 import com.project.bank_application.dtos.UserRequest;
 import com.project.bank_application.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/account")
@@ -26,5 +25,34 @@ public class UserController {
         var newUser = userService.createAccount(request);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
+
+    @GetMapping("/balanceEnquiry")
+    public ResponseEntity<BankResponse> balanceEnquiry(@RequestBody EnquiryRequest request) {
+
+        var response = userService.balanceEnquiry(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/nameEnquiry")
+    public ResponseEntity<String> nameEnquiry(@RequestBody EnquiryRequest request) {
+
+        var response = userService.nameEnquiry(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/credit")
+    public ResponseEntity<BankResponse> creditAccount(@RequestBody CreditDebitRequest request) {
+
+        var response = userService.creditAccount(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/debit")
+    public ResponseEntity<BankResponse> debitAccount(@RequestBody CreditDebitRequest request) {
+
+        var response = userService.debitAccount(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }
