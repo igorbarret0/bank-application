@@ -20,10 +20,14 @@ public class AccountUtils {
     public static final String ACCOUNT_CREDIT_SUCCESS_MESSAGE = "User account credited successfully";
 
     public static final String INSUFFICIENT_FUNDS_CODE = "006";
-    public static final String INSUFFICIENT_FUNDS_MESSAGE = "Insufficient quantity in your balance to withdraw";
+    public static final String INSUFFICIENT_FUNDS_MESSAGE = "Insufficient quantity in your account balance";
 
     public static final String ACCOUNT_DEBIT_SUCCESS_CODE = "007";
     public static final String ACCOUNT_DEBIT_SUCCESS_MESSAGE = "User account debited successfully";
+
+    public static final String TRANSFER_SUCCESSFUL_CODE = "008";
+    public static final String TRANSFER_SUCCESSFUL_MESSAGE = "Transfer successful";
+
 
     public static String generateAccountNumber() {
 

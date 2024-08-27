@@ -180,4 +180,56 @@ public class UserServiceImpl implements UserService {
         );
 
     }
+
+    @Override
+    public BankResponse transfer(TransferRequest request) {
+
+        boolean isAccountSenderExist = userRepository.existsByAccountNumber(request.getAccountNumberSender());
+        boolean isAccountReceiverExist = userRepository.existsByAccountNumber(request.getAccountNumberReceiver());
+
+        if (!isAccountSenderExist || !isAccountReceiverExist) {
+            return new BankResponse(
+                    AccountUtils.ACCOUNT_NOT_EXIST_CODE,
+                    AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE,
+                    null
+            );
+        }
+
+
+        User accountSender = userRepository.findByAccountNumber(request.getAccountNumberSender());
+        var debitAccountSender = new CreditDebitRequest(accountSender.getAccountNumber(), request.getAmount());
+        if (request.getAmount().compareTo(accountSender.getAccountBalance()) > 0) {
+
+            return new BankResponse(
+                    AccountUtils.INSUFFICIENT_FUNDS_CODE,
+                    AccountUtils.INSUFFICIENT_FUNDS_MESSAGE,
+                    null
+            );
+        }
+        debitAccount(debitAccountSender);
+
+        EmailDetails debitAlert = new EmailDetails();
+        debitAlert.setRecipient(accountSender.getEmail());
+        debitAlert.setMessageBody("The amount of " + request.getAmount() + " has been deducted from your account");
+        debitAlert.setSubject("DEBIT ALERT");
+        emailService.sendEmail(debitAlert);
+
+        User accountReceiver = userRepository.findByAccountNumber(request.getAccountNumberReceiver());
+        var creditAccountReceiver = new CreditDebitRequest(accountReceiver.getAccountNumber(), request.getAmount());
+        creditAccount(creditAccountReceiver);
+
+        EmailDetails creditAlert = new EmailDetails();
+        creditAlert.setRecipient(accountReceiver.getEmail());
+        creditAlert.setMessageBody("The amount of " + request.getAmount() + " has been sent to your account");
+        creditAlert.setSubject("CREDIT ALERT");
+        emailService.sendEmail(creditAlert);
+
+
+        return new BankResponse(
+                AccountUtils.TRANSFER_SUCCESSFUL_CODE,
+                AccountUtils.TRANSFER_SUCCESSFUL_MESSAGE,
+                null
+        );
+
+    }
 }

@@ -1,9 +1,6 @@
 package com.project.bank_application.controller;
 
-import com.project.bank_application.dtos.BankResponse;
-import com.project.bank_application.dtos.CreditDebitRequest;
-import com.project.bank_application.dtos.EnquiryRequest;
-import com.project.bank_application.dtos.UserRequest;
+import com.project.bank_application.dtos.*;
 import com.project.bank_application.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +48,13 @@ public class UserController {
     public ResponseEntity<BankResponse> debitAccount(@RequestBody CreditDebitRequest request) {
 
         var response = userService.debitAccount(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<BankResponse> transfer(@RequestBody TransferRequest request) {
+
+        var response = userService.transfer(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

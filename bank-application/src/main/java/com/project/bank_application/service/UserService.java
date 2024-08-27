@@ -1,9 +1,6 @@
 package com.project.bank_application.service;
 
-import com.project.bank_application.dtos.BankResponse;
-import com.project.bank_application.dtos.CreditDebitRequest;
-import com.project.bank_application.dtos.EnquiryRequest;
-import com.project.bank_application.dtos.UserRequest;
+import com.project.bank_application.dtos.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,4 +15,6 @@ public interface UserService {
     BankResponse creditAccount(CreditDebitRequest request);
 
     BankResponse debitAccount(CreditDebitRequest request);
+
+    BankResponse transfer(TransferRequest request);
 }
