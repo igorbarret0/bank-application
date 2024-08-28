@@ -8,4 +8,6 @@ public interface EmailService {
 
     void sendEmail(EmailDetails emailDetails);
 
+    void sendEmailWithAttachment(EmailDetails emailDetails);
+
 }
