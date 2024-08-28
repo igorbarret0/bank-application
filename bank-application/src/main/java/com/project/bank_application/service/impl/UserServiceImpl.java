@@ -4,6 +4,7 @@ import com.project.bank_application.dtos.*;
 import com.project.bank_application.entity.User;
 import com.project.bank_application.repository.UserRepository;
 import com.project.bank_application.service.EmailService;
+import com.project.bank_application.service.TransactionService;
 import com.project.bank_application.service.UserService;
 import com.project.bank_application.utils.AccountUtils;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private EmailService emailService;
+    private TransactionService transactionService;
 
-    public UserServiceImpl(UserRepository userRepository, EmailService emailService) {
+    public UserServiceImpl(UserRepository userRepository, EmailService emailService, TransactionService transactionService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.transactionService = transactionService;
     }
 
     @Override
@@ -130,6 +133,13 @@ public class UserServiceImpl implements UserService {
         userToCredit.setAccountBalance(userToCredit.getAccountBalance().add(request.getAmount()));
         userRepository.save(userToCredit);
 
+        // Save transaction
+        TransactionDto transactionDto = new TransactionDto();
+        transactionDto.setAccountNumber(userToCredit.getAccountNumber());
+        transactionDto.setTransactionType("CREDIT");
+        transactionDto.setAmount(request.getAmount());
+        transactionService.saveTransaction(transactionDto);
+
         return new BankResponse(
                 AccountUtils.ACCOUNT_CREDIT_SUCCESS_CODE,
                 AccountUtils.ACCOUNT_CREDIT_SUCCESS_MESSAGE,
@@ -168,6 +178,13 @@ public class UserServiceImpl implements UserService {
         userToDebit.setAccountBalance(newBalance);
 
         userRepository.save(userToDebit);
+
+        // Save transaction
+        TransactionDto transactionDto = new TransactionDto();
+        transactionDto.setAccountNumber(userToDebit.getAccountNumber());
+        transactionDto.setTransactionType("DEBIT");
+        transactionDto.setAmount(request.getAmount());
+        transactionService.saveTransaction(transactionDto);
 
         return new BankResponse(
                     AccountUtils.ACCOUNT_DEBIT_SUCCESS_CODE,
@@ -223,7 +240,6 @@ public class UserServiceImpl implements UserService {
         creditAlert.setMessageBody("The amount of " + request.getAmount() + " has been sent to your account");
         creditAlert.setSubject("CREDIT ALERT");
         emailService.sendEmail(creditAlert);
-
 
         return new BankResponse(
                 AccountUtils.TRANSFER_SUCCESSFUL_CODE,
