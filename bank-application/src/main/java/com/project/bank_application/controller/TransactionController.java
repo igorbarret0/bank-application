@@ -2,7 +2,7 @@ package com.project.bank_application.controller;
 
 import com.itextpdf.text.DocumentException;
 import com.project.bank_application.entity.Transaction;
-import com.project.bank_application.service.BankStatement;
+import com.project.bank_application.service.BankStatementService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import java.util.List;
 @RequestMapping("/bankStatement")
 public class TransactionController {
 
-    private BankStatement bankStatement;
+    private BankStatementService bankStatementService;
 
-    public TransactionController(BankStatement bankStatement) {
-        this.bankStatement = bankStatement;
+    public TransactionController(BankStatementService bankStatementService) {
+        this.bankStatementService = bankStatementService;
     }
 
     @GetMapping
@@ -25,7 +25,7 @@ public class TransactionController {
                                                                    @RequestParam String startDate,
                                                                    @RequestParam String endDate) throws DocumentException, FileNotFoundException {
 
-        var response = bankStatement.generateStatement(accountNumber, startDate, endDate);
+        var response = bankStatementService.generateStatement(accountNumber, startDate, endDate);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }

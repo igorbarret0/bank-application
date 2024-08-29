@@ -19,14 +19,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
-public class BankStatement {
+public class BankStatementService {
 
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
     private EmailService emailService;
     private static final String FILE = "C:\\Users\\Pichau\\Documents\\MyStatements.pdf";
 
-    public BankStatement(TransactionRepository transactionRepository, UserRepository userRepository, EmailService emailService) {
+    public BankStatementService(TransactionRepository transactionRepository, UserRepository userRepository, EmailService emailService) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
